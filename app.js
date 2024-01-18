@@ -11,7 +11,8 @@ mongoose.connect('mongodb://127.0.0.1:27017/yelp-camp')
 // mongoose.connect('mongodb://127.0.0.1:27017/yelp-camp', {
 //     useNewUrlParser: true,
 //     useCreateIndex: true,
-//     useUnifiedTopology: true
+//     useUnifiedTopology: true,
+//      useFindAndModify: false
 // })
 
 const db = mongoose.connection;
@@ -28,6 +29,7 @@ app.engine('ejs', ejsMate);
 
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/campgrounds', campgrounds);
 app.use('/campgrounds/:id/reviews', reviews);
