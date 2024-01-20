@@ -2,12 +2,12 @@ const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
 const methodOverride = require('method-override');
-const ejsMate = require('ejs-mate');
+const ejsMate = require('ejs-mate'); // $ npm install ejs-mate --save
 
 const campgrounds = require('./routes/campgrounds');
 const reviews = require('./routes/reviews')
-// npm i express-session
-const session = require('express-session');
+const session = require('express-session'); // npm i express-session
+const flash = require('connect-flash'); // npm i connect-flash
 
 mongoose.connect('mongodb://127.0.0.1:27017/yelp-camp')
 // mongoose.connect('mongodb://127.0.0.1:27017/yelp-camp', {
@@ -44,6 +44,13 @@ const sessionConfig = {
     }
 }
 app.use(session(sessionConfig));
+app.use(flash());
+
+app.use((req, res, next) => {
+    res.locals.success = req.flash('success');
+    res.locals.error = req.flash('error');
+    next();
+})
 
 app.use('/campgrounds', campgrounds);
 app.use('/campgrounds/:id/reviews', reviews);
