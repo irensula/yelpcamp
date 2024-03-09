@@ -19,15 +19,24 @@ const reviewRoutes = require('./routes/reviews');
 
 const campgrounds = require('./routes/campgrounds');
 const reviews = require('./routes/reviews')
-const session = require('express-session'); // npm i express-session
 const flash = require('connect-flash'); // npm i connect-flash
+
+// const dbUrl = process.env.DB_URL;
+
+const dbUrl = 'mongodb://0.0.0.0:27017/yelp-camp';
+mongoose.connect(dbUrl);
+// mongoose.connect('mongodb://127.0.0.1:27017/yelp-camp');
+
+// npm i connect-mongo
+const session = require('express-session'); // npm i express-session
+const MongoStore = require('connect-mongo');
 
 // npm i express-mongo-sanitize
 const mongoSanitize = require('express-mongo-sanitize');
 // npm i helmet
 const helmet = require('helmet');
 
-mongoose.connect('mongodb://0.0.0.0:27017/yelp-camp')
+
 // mongoose.connect('mongodb://127.0.0.1:27017/yelp-camp', {
 //     useNewUrlParser: true,
 //     useCreateIndex: true,
@@ -52,8 +61,18 @@ app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(mongoSanitize());
 
+// using Mongo for session store
+const store = MongoStore.create({
+    mongoUrl: dbUrl,
+    touchAfter: 24 * 60 * 60,
+    crypto: {
+        secret: 'thisshouldbeabettersecret!'
+    }
+});
+
 // session and cookies
 const sessionConfig = {
+    store: store,
     name: 'session',
     secret: 'thisshouldbeabettersecret',
     resave: false,
@@ -68,6 +87,7 @@ app.use(session(sessionConfig));
 app.use(flash());
 app.use(helmet());
 
+// strict locations where we fetch resources from
 const scriptSrcUrls = [
     "https://stackpath.bootstrapcdn.com/",
     "https://api.tiles.mapbox.com/",
