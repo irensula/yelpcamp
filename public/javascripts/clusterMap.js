@@ -75,7 +75,7 @@
             paint: {
                 'circle-color': '#11b4da',
                 'circle-radius': 20,
-                'circle-stroke-width': 10,
+                //'circle-stroke-width': 1,
                 'circle-stroke-color': '#fff'
             }
         });
